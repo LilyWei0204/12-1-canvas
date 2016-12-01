@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;padding: 0;
+        }
+        canvas{
+            background: #ccc;
+        }
+        
+    </style>
+    
+</head>
+<body>
+<canvas width="600" height="300">
+</canvas>
+<input type="file">
+
+<ul>
+    <li data-role="blur">模糊</li>
+    <li data-role="fx">反相</li>
+    <li data-role="m">马赛克</li>
+</ul>
+<img src="" alt="" hidden>
+
+
+</body>
+</html>
+<script>
+    var canvas=document.querySelector("canvas");
+    var cobj=canvas.getContext("2d");
+    var img=document.querySelector("img");
+    cobj.drawImage(img,0,0,200,200);
+    var dataobj=cobj.getImageData(0,0,200,200);
+    /*高斯模糊*/
+    //blur(dataobj,10,200,200);
+    function blur(dataobj,num,x,y) {
+        var width = dataobj.width, height = dataobj.height;
+        var arr=[];
+        var num = num;
+        for (var i = 0; i < height; i++) {//行
+            for (var j = 0; j < width; j++) {//列  x
+                var x1=j+num>width?j-num:j;
+                var y1=i+num>height?i-num:i;
+                var dataObj = cobj.getImageData(x1, y1,num, num);
+
+                var r = 0, g = 0, b = 0;
+                for (var k = 0; k < dataObj.width * dataObj.height; k++) {
+                    r += dataObj.data[k * 4 + 0];
+                    g += dataObj.data[k * 4 + 1];
+                    b += dataObj.data[k * 4 + 2];
+                }
+
+                r = parseInt(r / (dataObj.width * dataObj.height));
+                g = parseInt(g / (dataObj.width * dataObj.height));
+                b = parseInt(b / (dataObj.width * dataObj.height));
+
+                arr.push(r,g,b,255);
+
+            }
+
+        }
+
+        for(var i=0;i<dataobj.data.length;i++){
+            dataobj.data[i]=arr[i]
+        }
+        cobj.putImageData(dataobj,x,y);
+
+    }
+
+    /*马赛克*/
+    //m(dataobj,10,200,200)
+    function m(dataobj,num,x,y){
+        var width=200,height=200;
+        var num=num;
+        var w=width/num;
+        var h=height/num;
+        for(var i=0;i<num;i++){//行
+            for(var j=0;j<num;j++){//列
+                var dataobj=cobj.getImageData(j*w,i*h,w,h);
+                var r=0, g=0,b=0;
+                for(var k=0;k<dataobj.width*dataobj.height;k++){
+                    r+=dataobj.data[k*4+0];
+                    g+=dataobj.data[k*4+1];
+                    b+=dataobj.data[k*4+2];
+                }
+                r=parseInt(r/(dataobj.width*dataobj.height));
+                g=parseInt(g/(dataobj.width*dataobj.height));
+                b=parseInt(b/(dataobj.width*dataobj.height));
+                for(var k=0;k<dataobj.width*dataobj.height;k++){
+                    dataobj.data[k*4+0]=r;
+                    dataobj.data[k*4+1]=g;
+                    dataobj.data[k*4+2]=b;
+                }
+                cobj.putImageData(dataobj,x+j*w,y+i*h);
+
+            }
+
+        }
+
+    }
+
+    /*反向*/
+   //fx(dataobj,200,200);
+    function fx(dataobj,x,y){
+        for(var a=0;a<dataobj.width*dataobj.height;a++){
+            dataobj.data[a*4+0]=255-dataobj.data[a*4+0];
+            dataobj.data[a*4+1]=255-dataobj.data[a*4+1];
+            dataobj.data[a*4+2]=255-dataobj.data[a*4+2];
+            dataobj.data[a*4+3]=255
+        }
+        cobj.putImageData(dataobj,x,y)
+    }
+    /*处理文件*/
+    var  file=document.querySelector("input");
+    var img=document.querySelector("img");
+
+    file.onchange=function(){
+        var fileObj=this.files[0];
+        var reader=new FileReader();
+        reader.readAsDataURL(fileObj);
+        reader.onload=function(e){
+            img.src= e.target.result;
+            cobj.drawImage(img,0,0,canvas.width,canvas.height)
+            dataobj=cobj.getImageData(0,0,canvas.width,canvas.height);
+        }
+    }
+
+    var lis=document.getElementsByTagName("li");
+    for(var i=0;i<lis.length;i++){
+        lis[i].onclick=function(){
+            var attr=this.getAttribute("data-role")
+            if(attr=="blur"){
+                //alert(1);
+                blur(dataobj,20,0,0)
+            }else if(attr=="fx"){
+                fx(dataobj,0,0)
+            }else if(attr=="m"){
+                m(dataobj,50,0,0)
+            }
+        }
+    }
+
+
+
+
+
+</script>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas{
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+<canvas width="600" height="600"></canvas>
+
+</body>
+</html>
+<script>
+    var canvas=document.querySelector("canvas");
+    var cobj=canvas.getContext("2d");
+    function lizi(){
+        this.x=200;
+        this.y=200;
+        this.r=3+3*Math.random();
+        //this.color="rgb(40,200,255)";
+        this.color="rgb("+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+")";
+        this.speedy=-5;
+        this.speedx=6*Math.random()-3;
+        this.zhongli=0.3;
+        this.speedr=0.1;
+    }
+    lizi.prototype={
+        draw:function(){
+            cobj.beginPath();
+            cobj.save();
+            cobj.translate(this.x,this.y);
+            cobj.fillStyle=this.color;
+            cobj.arc(0,0,this.r,0,2*Math.PI);
+            cobj.fill();
+            cobj.restore();
+
+        },
+        update:function(){
+            this.speedy+=this.zhongli;
+            this.x+=this.speedx;
+            this.y+=this.speedy;
+            this.r-=this.speedr;
+
+        }
+    }
+    var arr=[];
+    setInterval(function(){
+        cobj.clearRect(0,0,600,600);
+        arr.push(new lizi());
+        for(var i=0;i<arr.length;i++){
+            arr[i].draw();
+            arr[i].update();
+            if(arr[i].r<0){
+                arr[i]=new lizi();
+            }
+
+        }
+        if(arr.length>100){
+            arr.shift();
+        }
+    },100)
+
+
+
+</script>

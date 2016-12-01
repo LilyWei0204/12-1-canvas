@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas{
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+<canvas width="600" height="600"></canvas>
+
+</body>
+</html>
+<script>
+    var canvas=document.querySelector("canvas");
+    var cobj=canvas.getContext("2d");
+    /*所有2d图像的操作。都是通过cobj这个对象来完成的，内存里面我们只能获取到是cobj，通过cobj绘制图形，不会形成*/
+    //画布是一张纸，cobj是复印纸
+    //var x=5;
+    //var y=5;
+    //setInterval(function(){
+        //x++;
+        //y++;
+        //cobj.clearRect(0,0,600,600);
+        //cobj.save();/*保存/记录cobj的位置*/
+        //cobj.translate(x,y);
+        //cobj.rotate(Math.PI/4);
+        //cobj.fillRect(0,0,100,100);
+        //cobj.restore();/*放到原始的位置*/
+    //},50)
+    /*function rect(){
+        this.x=0;
+        this.y=0;
+        this.speedx=5;
+        this.speedy=5;
+        this.color="000";
+        this.w=100;
+        this.h=50;
+    }
+    rect.prototype={
+        draw:function(){
+            cobj.save();
+            cobj.translate(this.x,this.y);
+            cobj.fillStyle=this.color;
+            cobj.fillRect(0,0,this.w,this.h);
+            cobj.restore();
+        },
+        update:function(){
+            this.x+=this.speedx;
+            this.y+=this.speedy;
+        }
+    }
+    var rect1=new rect();
+    var rect2=new rect();
+    rect2.w=50;
+    rect2.h=50;
+    rect2.color="red";
+    rect2.speedx=5;
+    rect2.speedy=10;
+    setInterval(function(){
+        cobj.clearRect(0,0,600,600);
+        rect1.draw();
+        rect1.update();
+        rect2.draw();
+        rect2.update();
+    },50);*/
+    /*贝塞尔曲线*/
+    cobj.beginPath();
+    cobj.moveTo(-600,100);/*起始点*/
+    //cobj.quadraticCurveTo(50,50,100,100);/*二次方中间点，结束点*/
+    //cobj.quadraticCurveTo(150,150,200,100);
+    cobj.bezierCurveTo(-400,50,-200,150,0,100);
+    cobj.bezierCurveTo(200,50,400,150,600,100);
+    cobj.stroke();
+/*矩形碰撞的公式：
+不碰撞：x2+w2<x1或x1+w1<x2
+        y2+h2<y1;y1+h1<y2
+* */
+
+</script>
